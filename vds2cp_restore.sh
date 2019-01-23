@@ -323,7 +323,7 @@ do
   echo -e "\e[33m Restoring database $dbNAME from $dblist.sql \e[0m";
   mysql "$dbNAME" < "$WORKDIR"/database_dumps/"$dblist".sql
 
-  tibles=$(mysql -e 'SELECT COUNT(DISTINCT `table_name`) FROM `information_schema`.`columns` WHERE `table_schema` = "sysadmin_prassdb"'|sed -n '2 p')
+  tibles=$(mysql -e 'SELECT COUNT(DISTINCT `table_name`) FROM `information_schema`.`columns` WHERE `table_schema` = "$dbNAME"'|sed -n '2 p')
 
   if [ "$tibles" -ge 1 ]; then
     echo -e "\e[32m Database $dbNAME restoration complete. \e[0m"; echo

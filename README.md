@@ -37,4 +37,4 @@ Restoration Script : vds2cp_restore.sh [ To be ran on cPanel ]
 
 This should do everything you need. You can remove the /root/vds2cp_restore_USERNAME.tar.gz file once everything looks good.
 
-Logs for everything the script has done is at /home/USERNAME/vds2cp.log
+Logs for everything the script has done is at /var/log/CPANELUSERNAME_vds2cp.log

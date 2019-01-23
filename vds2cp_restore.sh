@@ -16,32 +16,56 @@ vdsUSER=$1
 cpUSER=$2
 pWORD=$3
 WORKDIR=/root/"$vdsUSER"_restore
+PWSTRNG=$(whmapi1 get_password_strength password=$3 |grep "strength:"| awk '{gsub(" strength: ", "");print}')
+exec > >(tee -i /var/log/"$cpUSER"_vds2cp.log)
+exec 2>&1
 
-exec 2>> /var/log/"$cpUSER"_vds2cp.log
 
+trap "exit 1" TERM
+export TOP_PID=$$
+
+function dye()
+{
+   echo -e "\e[1m\e[41m Try Again! \e[0m"
+   kill -s TERM $TOP_PID
+}
 # -----------------------------------------------------------------------------
 # Check for required arguments before starting
 # -----------------------------------------------------------------------------
 if [ -z "$vdsUSER" ]; then
   echo
-  echo -e "\e[1m\e[41m You didn't enter a VDS username!! \e[0m" >&2; echo
-  exit 1
+  echo -e "\e[1m\e[41m You didn't enter a VDS username!! \e[0m" ; echo
+  echo $(dye)
 fi
 
 if [ -z "$cpUSER" ]; then
   echo
-  echo -e "\e[1m\e[41m You didn't enter a cPanel username!! \e[0m" >&2; echo
-  exit 1
+  echo -e "\e[1m\e[41m You didn't enter a cPanel username!! \e[0m" ; echo
+  echo $(dye)
 fi
 
 if [ -z "$pWORD" ]; then
   echo
-  echo -e "\e[1m\e[41m You didn't enter a default password!! \e[0m" >&2;echo
-  exit 1
+  echo -e "\e[1m\e[41m You didn't enter a default password!! \e[0m" ;echo
+  echo $(dye)
 fi
 
+if [ "$PWSTRNG" -le "64" ]; then
+  echo
+  echo -e "\e[1m\e[41m You must enter a password with a strenght of 65 or more. \e[0m"; echo
+  echo $(dye)
+fi
 
+echo
+echo -e "\e[33m\e[1m Checking for Date::Parse. Installation can take some time. \e[0m";
 
+if (perldoc -l Date::Parse | grep -q "Date/Parse.pm")
+ then
+   echo
+   echo -e "\e[1m\e[32m Date::Parse is installed! \e[0m" ;
+else
+  cpan -i Date::Parse
+fi
 
 # -----------------------------------------------------------------------------
 # Creating the restore directory used.
@@ -55,7 +79,7 @@ echo
 
 if [ ! -f /root/vds2cp_restore_"$vdsUSER".tar.gz ]; then
   echo -e "\e[1m\e[41m Restore file vds2cp_restore_$vdsUSER.tar.gz file is not located at /root/vds2cp_restore_$vdsUSER.tar.gz!!! \e[0m";sleep 1;echo
-  exit 1;
+  echo $(dye)
 else
   echo -e "\e[33m\e[1m Extracting vds2cp_restore_$cpUSER.tar.gz now... \e[0m \e[0m \e[30;48;5;226m This can SERIOUSLY take a long time. \e[0m"
   while :; do
@@ -100,7 +124,7 @@ grep "$cpUSER" /etc/passwd &>/dev/null
 if [ $? -eq 1 ]
 then
   echo  -e "\e[1m\e[41m Account $cpUSER not created previous step! Catastrophic failure! \e[0m"
-  exit 1
+  echo $(dye)
 else
   echo  -e "\e[32m Account $cpUSER successfully created! \e[0m"
   echo

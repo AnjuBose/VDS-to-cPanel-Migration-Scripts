@@ -17,7 +17,8 @@ cpUSER=$2
 pWORD=$3
 WORKDIR=/root/"$vdsUSER"_restore
 PWSTRNG=$(whmapi1 get_password_strength password=$3 |grep "strength:"| awk '{gsub(" strength: ", "");print}')
-exec > >(tee -i /var/log/"$cpUSER"_vds2cp.log)
+mkdir -p /var/log/vds2cp_logs
+exec > >(tee -i /var/log/vds2cp_logs/"$cpUSER"_vds2cp.log)
 exec 2>&1
 
 
@@ -42,18 +43,21 @@ if [ -z "$cpUSER" ]; then
   echo
   echo -e "\e[1m\e[41m You didn't enter a cPanel username!! \e[0m" ; echo
   echo $(dye)
+  exit
 fi
 
 if [ -z "$pWORD" ]; then
   echo
   echo -e "\e[1m\e[41m You didn't enter a default password!! \e[0m" ;echo
   echo $(dye)
+  exit 1
 fi
 
 if [ "$PWSTRNG" -le "64" ]; then
   echo
   echo -e "\e[1m\e[41m You must enter a password with a strenght of 65 or more. \e[0m"; echo
   echo $(dye)
+  exit 1
 fi
 
 echo
@@ -113,7 +117,7 @@ while :; do
 done &
 bgid=$!
 
-whmapi1 --output=jsonpretty createacct username=$cpUSER domain=$mainDOM plan=Expanded >> /var/log/"$cpUSER"_vds2cp.log 2>&1
+whmapi1 --output=jsonpretty createacct username=$cpUSER domain=$mainDOM plan=Expanded
 
 kill "$bgid"
 
@@ -150,7 +154,7 @@ do
   done &
   bgid=$!
 
-  cpapi2 --user="$cpUSER" --output=jsonpretty AddonDomain addaddondomain dir=%2Fhome%2F"$cpUSER"%2Fpublic_html%2F"$addom" newdomain="$addom" subdomain="$subd" >> /var/log/"$cpUSER"_vds2cp.log 2>&1
+  cpapi2 --user="$cpUSER" --output=jsonpretty AddonDomain addaddondomain dir=%2Fhome%2F"$cpUSER"%2Fpublic_html%2F"$addom" newdomain="$addom" subdomain="$subd"
 
   addverify=$(grep DNS /var/cpanel/users/"$cpUSER" |grep -v XDNS| sed 's/.*=//'|grep -c ^"$addom"$)
 
@@ -163,7 +167,7 @@ do
   fi
 
 
-  rsync -a "$WORKDIR"/domain_files/"$addom"/ /home/"$cpUSER"/public_html/"$addom"/ >> /var/log/"$cpUSER"_vds2cp.log 2>&1
+  rsync -a "$WORKDIR"/domain_files/"$addom"/ /home/"$cpUSER"/public_html/"$addom"/
 
   kill "$bgid"
 
@@ -188,7 +192,7 @@ while read -r pdline
 do
   parkdom=$(echo "$pdline" | awk '{print $1}')
   #pdom2=`echo "$pdline" | awk '{print $1}'|sed 's/.\{4\}$//'`
-  cpapi2 --user="$cpUSER" --output=jsonpretty Park park domain="$parkdom" >> /var/log/"$cpUSER"_vds2cp.log 2>&1
+  cpapi2 --user="$cpUSER" --output=jsonpretty Park park domain="$parkdom"
 
   pdverify=$(grep DNS /var/cpanel/users/"$cpUSER" |grep -v XDNS| sed 's/.*=//'|grep -c ^"$parkdom"$)
 
@@ -218,7 +222,7 @@ do
 
 
 
-  cpapi2 --user="$cpUSER" --output=jsonpretty SubDomain addsubdomain domain="$subdom1" rootdomain="$mforsub" dir=%2Fhome%2F"$cpUSER"%2Fpublic_html%2F"$subactual" >> /var/log/"$cpUSER"_vds2cp.log 2>&1
+  cpapi2 --user="$cpUSER" --output=jsonpretty SubDomain addsubdomain domain="$subdom1" rootdomain="$mforsub" dir=%2Fhome%2F"$cpUSER"%2Fpublic_html%2F"$subactual"
 
   sdverify=$(grep DNS /var/cpanel/users/"$cpUSER"|grep -v XDNS| sed 's/.*=//'|grep -c ^"$subactual"$)
 
@@ -235,7 +239,7 @@ do
   done &
   bgid=$!
 
-  rsync -vaP "$WORKDIR"/domain_files/"$subactual"/ /home/"$cpUSER"/public_html/"$subactual"/ >> /var/log/"$cpUSER"_vds2cp.log 2>&1
+  rsync -vaP "$WORKDIR"/domain_files/"$subactual"/ /home/"$cpUSER"/public_html/"$subactual"/
   echo
   kill "$bgid"
 
@@ -259,7 +263,7 @@ while :; do
 done &
 bgid=$!
 
-rsync -vaP "$WORKDIR"/domain_files/"$mainDOM"/ /home/"$cpUSER"/public_html/ >> /var/log/"$cpUSER"_vds2cp.log 2>&1
+rsync -vaP "$WORKDIR"/domain_files/"$mainDOM"/ /home/"$cpUSER"/public_html/
 chown -R "$cpUSER":"$cpUSER" /home/"$cpUSER"/public_html/*
 
 kill "$bgid"
@@ -283,7 +287,7 @@ while read -r mailline
 do
   eusr=$(echo "$mailline" | sed 's/@.*//')
   edom=$(echo "$mailline" | sed 's/.*@//')
-  uapi --user="$cpUSER" --output=jsonpretty Email add_pop email="$eusr" password="$pWORD" domain="$edom" skip_update_db=1  >> /var/log/"$cpUSER"_vds2cp.log 2>&1
+  uapi --user="$cpUSER" --output=jsonpretty Email add_pop email="$eusr" password="$pWORD" domain="$edom" skip_update_db=1
 
   if [ -d /home/"$cpUSER"/mail/"$edom"/"$eusr" ]; then
     echo -e "\e[32m Created address $eusr@$edom with default password. \e[0m";
@@ -299,21 +303,21 @@ echo
 # -----------------------------------------------------------------------------
 echo -e "\e[33m\e[1m Converting Mailboxes from VDS to cPanel compatible... \e[0m";
 
-wget -O "$WORKDIR"/mb2md.gz http://batleth.sapienti-sat.org/projects/mb2md/mb2md-3.20.pl.gz >> /var/log/"$cpUSER"_vds2cp.log 2>&1
-gunzip "$WORKDIR"/mb2md.gz >> /var/log/"$cpUSER"_vds2cp.log 2>&1
-chmod go+x "$WORKDIR"/mb2md >> /var/log/"$cpUSER"_vds2cp.log 2>&1
+wget -O "$WORKDIR"/mb2md.gz http://batleth.sapienti-sat.org/projects/mb2md/mb2md-3.20.pl.gz
+gunzip "$WORKDIR"/mb2md.gz
+chmod go+x "$WORKDIR"/mb2md
 
 while read -r mailboxes1
 do
   mailusr=$(echo "$mailboxes1" | sed 's/@.*//')
   maildom=$(echo "$mailboxes1" | sed 's/.*@//')
-  #uapi --user="$cpUSER" --output=jsonpretty Email add_pop email="$eusr" password="$pWORD" domain="$edom" skip_update_db=1  >> /var/log/"$cpUSER"_vds2cp.log 2>&1
-  perl "$WORKDIR"/mb2md -s "$WORKDIR"/mailboxes/"$mailusr" -d /home/"$cpUSER"/mail/"$maildom"/"$mailusr" >> /var/log/"$cpUSER"_vds2cp.log 2>&1
+  #uapi --user="$cpUSER" --output=jsonpretty Email add_pop email="$eusr" password="$pWORD" domain="$edom" skip_update_db=1
+  perl "$WORKDIR"/mb2md -s "$WORKDIR"/mailboxes/"$mailusr" -d /home/"$cpUSER"/mail/"$maildom"/"$mailusr"
 
   mbrstcheck=$(ls /home/"$cpUSER"/mail/"$maildom"/"$mailusr"/cur/ |wc -l)
 
   if [ "$mbrstcheck" -lt 1 ]; then
-    echo -e "\e[1m\e[91m Mailbox restore failed, or more likely was empty. Check /home/"$cpUSER"/mail/"$maildom"/"$mailusr"/cur/. \e[0m";
+    echo -e "\e[1m\e[91m Mailbox empty, or possible failed. Manual double checking may be required. \e[0m";
   else
     echo -e "\e[32m Mailbox for "$mailusr"@"$maildom" conversion complete. \e[0m";
   fi;
@@ -333,15 +337,15 @@ do
   dbUSER=$(echo "$cpUSERtrunc"_"$dbUSERtrunc")
 
   echo -e "\e[33m Creating database $dbNAME now... \e[0m";
-  uapi --user="$cpUSER" --output=jsonpretty Mysql create_database name="$dbNAME"  >> /var/log/"$cpUSER"_vds2cp.log 2>&1
+  uapi --user="$cpUSER" --output=jsonpretty Mysql create_database name="$dbNAME"
   echo -e "\e[32m Database $dbNAME creation complete. \e[0m"; echo
 
   echo -e "\e[33m Creating database user $dbUSER now... \e[0m";
-  uapi --user="$cpUSER" --output=jsonpretty Mysql create_user name="$dbUSER" password="$pWORD"  >> /var/log/"$cpUSER"_vds2cp.log 2>&1
+  uapi --user="$cpUSER" --output=jsonpretty Mysql create_user name="$dbUSER" password="$pWORD"
   echo -e "\e[32m Database User $dbUSER creation complete. \e[0m"; echo
 
   echo -e "\e[33m Adding $dbUSER to $dbNAME with ALL PRIVILEGES now... \e[0m";
-  uapi --user="$cpUSER" --output=jsonpretty Mysql set_privileges_on_database user="$dbUSER" database="$dbNAME" privileges=ALL%20PRIVILEGES  >> /var/log/"$cpUSER"_vds2cp.log 2>&1;
+  uapi --user="$cpUSER" --output=jsonpretty Mysql set_privileges_on_database user="$dbUSER" database="$dbNAME" privileges=ALL%20PRIVILEGES  ;
   echo -e "\e[32m ALL PRIVILEGES granted to user $dbUSER on database $dbNAME \e[0m";echo
 
   echo -e "\e[33m Restoring database $dbNAME from $dblist.sql \e[0m";

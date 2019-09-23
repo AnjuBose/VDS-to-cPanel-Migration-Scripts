@@ -203,7 +203,7 @@ while :; do
 done &
 bgid=$!
 
-tar -C "$WDIR" -zcf /root/vds2cp_restore_"$VDSUSER".tar.gz . |grep -v "Removing leading"
+tar -C "$WDIR" -cf /root/vds2cp_restore_"$VDSUSER".tar . |grep -v "Removing leading"
 
 kill "$bgid";
 echo

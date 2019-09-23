@@ -81,17 +81,17 @@ echo
 # Extract the tar to the directory we just made.
 # -----------------------------------------------------------------------------
 
-if [ ! -f /root/vds2cp_restore_"$vdsUSER".tar.gz ]; then
-  echo -e "\e[1m\e[41m Restore file vds2cp_restore_$vdsUSER.tar.gz file is not located at /root/vds2cp_restore_$vdsUSER.tar.gz!!! \e[0m";sleep 1;echo
+if [ ! -f /root/vds2cp_restore_"$vdsUSER".tar ]; then
+  echo -e "\e[1m\e[41m Restore file vds2cp_restore_$vdsUSER.tar file is not located at /root/vds2cp_restore_$vdsUSER.tar!!! \e[0m";sleep 1;echo
   echo $(dye)
 else
-  echo -e "\e[33m\e[1m Extracting vds2cp_restore_$cpUSER.tar.gz now... \e[0m \e[0m \e[30;48;5;226m This can SERIOUSLY take a long time. \e[0m"
+  echo -e "\e[33m\e[1m Extracting vds2cp_restore_$cpUSER.tar now... \e[0m \e[0m \e[30;48;5;226m This can SERIOUSLY take a long time. \e[0m"
   while :; do
     printf "."
     sleep 5
   done &
   bgid=$!
-  tar -zxf /root/vds2cp_restore_"$vdsUSER".tar.gz -C /root/"$vdsUSER"_restore/
+  tar -zxf /root/vds2cp_restore_"$vdsUSER".tar -C /root/"$vdsUSER"_restore/
   kill "$bgid"; echo
 fi
 

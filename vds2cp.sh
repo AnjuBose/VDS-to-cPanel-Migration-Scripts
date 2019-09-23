@@ -122,6 +122,14 @@ grep -E 'ServerName|DocumentRoot' /etc/httpd/conf/httpd.conf | sed 1,2d |sed -e 
 mkdir -p /root/"$TODAY"_"$VDSUSER"/domain_files/$MDOM
 ls /var/www/html/|grep -v '^fm$' |grep -v '^vdsbackup$'  |grep -vf "$WDIR"/text_files/tmp_excludes > "$WDIR"/text_files/mdom_exlist
 
+##ticking
+while :; do
+  printf "."
+  sleep 1
+done &
+bgid=$!
+##end ticking
+
 while read fline
 do
   cp -R /var/www/html/$fline $WDIR/domain_files/$MDOM/
@@ -129,6 +137,8 @@ done < "$WDIR"/text_files/mdom_exlist
 
 rm "$WDIR"/text_files/mdom_exlist
 rm "$WDIR"/text_files/tmp_excludes
+
+kill "$bgid"
 
 echo
 

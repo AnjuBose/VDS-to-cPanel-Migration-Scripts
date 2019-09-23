@@ -219,7 +219,7 @@ rm -rf "$WDIR"
 # -----------------------------------------------------------------------------
 # Signaling the script has completed.
 # -----------------------------------------------------------------------------
-echo -e "\e[1m\e[44m vds2cp_restore_`echo $VDSUSER`.tar.gz file backed up to /root/vds2cp_restore_`echo $VDSUSER`.tar.gz \e[0m";sleep 1;
+echo -e "\e[1m\e[44m vds2cp_restore_`echo $VDSUSER`.tar file backed up to /root/vds2cp_restore_`echo $VDSUSER`.tar \e[0m";sleep 1;
 echo
 
 echo -e "\e[1m\e[41m Exiting. Done. \e[0m";echo

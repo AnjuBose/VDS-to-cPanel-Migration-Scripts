@@ -48,7 +48,7 @@ echo
 echo -e "\e[33m\e[1m Getting Email Account list... \e[0m"
 cat /etc/mail/virtusertable |awk '{print $1}'|grep -vE '\#|MAILER-DAEMON|postmaster|^$|root\@|ftp\@'| sed '/^@/ d' > "$WDIR"/text_files/"$VDSUSER"_mailusers;sleep 1;echo
 
-echo -e "\e[33m\e[1m Copying mailbox data... \e[0m";echo
+echo -e "\e[33m\e[1m Copying mailbox data... \e[0m";
 
 ##ticking
 while :; do
@@ -119,7 +119,7 @@ do
   cp -R "$s"/. /root/"$TODAY"_"$VDSUSER"/domain_files/$d/
 done < "$WDIR"/text_files/"$VDSUSER"_addon_subdomains;
 
-kill "$bgid"; echo
+kill "$bgid";
 
 # -----------------------------------------------------------------------------
 # Copying subdomains data

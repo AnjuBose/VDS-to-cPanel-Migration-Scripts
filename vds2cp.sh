@@ -17,7 +17,7 @@ VDSUSER=`id|awk '{print $1}'|cut -d "(" -f 2|cut -d ")" -f 1`
 TODAY=`date +"%m-%d-%y"`
 WDIR=/root/"$TODAY"_"$VDSUSER"
 MDOM=`cat /bin/hostname | sed -n 2p | cut -d " " -f 2`
-IP=`cat /etc/hosts |awk '{print $1}'|tail -1`
+IP=`cat /etc/hosts |awk '{print $1}'|tail -1` #look into vds_ip command, much simpler.
 IFS=$'\n'
 
 # -----------------------------------------------------------------------------

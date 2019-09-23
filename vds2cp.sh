@@ -60,7 +60,7 @@ bgid=$!
 
 cp -a /var/spool/mail "$WDIR"/mailboxes
 
-kill "$bgid"
+kill "$bgid"; echo
 # -----------------------------------------------------------------------------
 # Get the main domain
 # -----------------------------------------------------------------------------
@@ -120,7 +120,7 @@ do
 done < "$WDIR"/text_files/"$VDSUSER"_addon_subdomains;
 echo
 
-kill "$bgid"
+kill "$bgid"; echo
 
 # -----------------------------------------------------------------------------
 # Copying subdomains data
@@ -142,7 +142,7 @@ do
   cp -R "$scop"/. /root/"$TODAY"_"$VDSUSER"/domain_files/$dcop/
 done < "$WDIR"/text_files/"$VDSUSER"_subdomain_list;
 
-kill "$bgid"
+kill "$bgid"; echo
 
 # -----------------------------------------------------------------------------
 # Copying the main domain data. This is messy and ugly, but there's no rsync.
@@ -168,9 +168,7 @@ done < "$WDIR"/text_files/mdom_exlist
 rm "$WDIR"/text_files/mdom_exlist
 rm "$WDIR"/text_files/tmp_excludes
 
-kill "$bgid"
-
-echo
+kill "$bgid"; echo
 
 # -----------------------------------------------------------------------------
 # Find all existing MySQL databases. MySQL must be running.
@@ -194,7 +192,7 @@ else
 fi
 echo
 
-kill "$bgid"
+kill "$bgid"; echo
 
 # -----------------------------------------------------------------------------
 # This tars and gzips all thats been gathered (data and text files, and dumps.)
@@ -208,7 +206,7 @@ bgid=$!
 
 tar -C "$WDIR" -zcf /root/vds2cp_restore_"$VDSUSER".tar.gz . |grep -v "Removing leading"
 
-kill "$bgid"
+kill "$bgid";
 echo
 
 echo -e "\e[33m\e[1m Archiving of all data now complete..."; echo

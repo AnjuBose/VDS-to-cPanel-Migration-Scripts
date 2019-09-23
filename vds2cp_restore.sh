@@ -92,7 +92,7 @@ else
   done &
   bgid=$!
   tar -zxf /root/vds2cp_restore_"$vdsUSER".tar.gz -C /root/"$vdsUSER"_restore/
-  kill "$bgid"
+  kill "$bgid"; echo
 fi
 
 echo
@@ -119,7 +119,7 @@ bgid=$!
 
 whmapi1 --output=jsonpretty createacct username=$cpUSER domain=$mainDOM plan=Expanded
 
-kill "$bgid"
+kill "$bgid"; echo
 
 # -----------------------------------------------------------------------------
 # Check that this user has been pre-created on the server.
@@ -169,7 +169,7 @@ do
 
   rsync -a "$WORKDIR"/domain_files/"$addom"/ /home/"$cpUSER"/public_html/"$addom"/
 
-  kill "$bgid"
+  kill "$bgid"; echo
 
   adataverify=$(find /home/"$cpUSER"/public_html/"$addom" ! -name . -print |grep -c /)
 
@@ -241,7 +241,7 @@ do
 
   rsync -vaP "$WORKDIR"/domain_files/"$subactual"/ /home/"$cpUSER"/public_html/"$subactual"/
   echo
-  kill "$bgid"
+  kill "$bgid"; echo
 
   sdataverify=$(find . ! -name . -prune -print /home/"$cpUSER"/public_html/"$subactual" |grep -c /)
 
@@ -266,7 +266,7 @@ bgid=$!
 rsync -vaP "$WORKDIR"/domain_files/"$mainDOM"/ /home/"$cpUSER"/public_html/
 chown -R "$cpUSER":"$cpUSER" /home/"$cpUSER"/public_html/*
 
-kill "$bgid"
+kill "$bgid";
 echo
 
 mdomdataverify=$(diff -sq "$WORKDIR"/domain_files/"$mainDOM"/ /home/"$cpUSER"/public_html/ |awk '{print $NF}' |grep -c '^identical$')

@@ -35,3 +35,18 @@ Restoration Script : vds2cp_restore.sh [ To be ran on cPanel ]
 This should do everything you need. You can remove the /root/vds2cp_restore_USERNAME.tar.gz file once everything looks good.
 
 Logs for everything the script has done is at /var/log/vds2cp/CPANELUSERNAME_vds2cp.log
+
+
+Master VDS Script : vds2cp_master.sh [ To be ran on VDS master as root ]
+-----------------------------------------------
+1. This is the master script. It's to be ran on the VDS master server as the root user. Not inside of the VDS, not as the user. This will package all of the VDS's on the server and put them in ~USER/root/ right now. Maybe it'll move everything to /root/vds_migration/ in the end. Not sure yet.
+
+2. Download this vds2cp_master.sh from this github repo.
+
+      wget --no-check-certificate https://raw.githubusercontent.com/stephenchaffins/VDS-to-cPanel-Migration-Scripts/master/vds2cp_master.sh; chmod 755 vds2cp_restore.sh
+
+3. You should just be able to run this. It will look like this:
+
+      ./vds2cp_master.sh
+
+3. This should output the packaging of each account to the screen. It'll do them in order, one by one. Log should be at /var/log/vds2cp_master.log on the VDS master.

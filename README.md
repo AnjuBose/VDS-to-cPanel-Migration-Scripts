@@ -43,10 +43,10 @@ Master VDS Script : vds2cp_master.sh [ To be ran on VDS master as root ]
 
 2. Download this vds2cp_master.sh from this github repo.
 
-      wget --no-check-certificate https://raw.githubusercontent.com/stephenchaffins/VDS-to-cPanel-Migration-Scripts/master/vds2cp_master.sh; chmod 755 vds2cp_restore.sh
+        wget --no-check-certificate https://raw.githubusercontent.com/stephenchaffins/VDS-to-cPanel-Migration-Scripts/master/vds2cp_master.sh; chmod 755 vds2cp_master.sh
 
 3. You should just be able to run this. It will look like this:
 
-      ./vds2cp_master.sh
-
-3. This should output the packaging of each account to the screen. It'll do them in order, one by one. Log should be at /var/log/vds2cp_master.log on the VDS master.
+        ./vds2cp_master.sh
+        
+4. This should output the packaging of each account to the screen. It'll do them in order, one by one. Log should be at /var/log/vds2cp_master.log on the VDS master.

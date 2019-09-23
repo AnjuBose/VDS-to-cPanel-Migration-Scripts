@@ -51,7 +51,7 @@ cat /etc/mail/virtusertable |awk '{print $1}'|grep -vE '\#|MAILER-DAEMON|postmas
 echo -e "\e[33m\e[1m Copying mailbox data... \e[0m";echo
 
 ##ticking
-echo; while :; do
+while :; do
   printf "."
   sleep 5
 done &
@@ -104,7 +104,7 @@ echo
 echo -e "\e[33m\e[1m Copying addon domain and subdomain file data now... \e[0m"
 
 ##ticking
-echo; while :; do
+while :; do
   printf "."
   sleep 5
 done &
@@ -118,7 +118,6 @@ do
   mkdir -p /root/"$TODAY"_"$VDSUSER"/domain_files/$d/
   cp -R "$s"/. /root/"$TODAY"_"$VDSUSER"/domain_files/$d/
 done < "$WDIR"/text_files/"$VDSUSER"_addon_subdomains;
-echo
 
 kill "$bgid"; echo
 
@@ -127,7 +126,7 @@ kill "$bgid"; echo
 # -----------------------------------------------------------------------------
 
 ##ticking
-echo; while :; do
+while :; do
   printf "."
   sleep 5
 done &
@@ -153,7 +152,7 @@ mkdir -p /root/"$TODAY"_"$VDSUSER"/domain_files/$MDOM
 ls /var/www/html/|grep -v '^fm$' |grep -v '^vdsbackup$'  |grep -vf "$WDIR"/text_files/tmp_excludes > "$WDIR"/text_files/mdom_exlist
 
 ##ticking
-echo; while :; do
+while :; do
   printf "."
   sleep 5
 done &
@@ -176,7 +175,7 @@ kill "$bgid"; echo
 echo -e "\e[33m\e[1m Getting list of MySQL databases and dumping them... \e[0m"
 
 ##ticking
-echo; while :; do
+while :; do
   printf "."
   sleep 5
 done &
@@ -198,7 +197,7 @@ kill "$bgid"; echo
 # This tars and gzips all thats been gathered (data and text files, and dumps.)
 # -----------------------------------------------------------------------------
 echo -e "\e[33m\e[1m Archiving and compressing everything thats been done...\e[0m \e[1m\e[41m BE PATIENT! \e[0m "; sleep 1
-echo; while :; do
+while :; do
   printf "."
   sleep 5
 done &

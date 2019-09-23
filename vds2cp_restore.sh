@@ -86,7 +86,7 @@ if [ ! -f /root/vds2cp_restore_"$vdsUSER".tar.gz ]; then
   echo $(dye)
 else
   echo -e "\e[33m\e[1m Extracting vds2cp_restore_$cpUSER.tar.gz now... \e[0m \e[0m \e[30;48;5;226m This can SERIOUSLY take a long time. \e[0m"
-  echo; while :; do
+  while :; do
     printf "."
     sleep 5
   done &
@@ -111,7 +111,7 @@ mainDOM=$(awk '{print $1}' "$WORKDIR"/text_files/"$vdsUSER"_main_domain |sed 's/
 
 echo -e "\e[32m Creating cPanel account for domain $mainDOM as user $cpUSER \e[0m";sleep 1;echo
 
-echo; while :; do
+while :; do
   printf "."
   sleep 5
 done &
@@ -148,7 +148,7 @@ do
   echo -e "\e[33m Working on addon domain $addom now... \e[0m";
 
 
-  echo; while :; do
+  while :; do
     printf "."
     sleep 5
   done &
@@ -233,7 +233,7 @@ do
     echo -e "\e[1m\e[41m Subdomain $subactual failed! Try creating it manually. \e[0m"
   fi;
 
-  echo; while :; do
+  while :; do
     printf "."
     sleep 5
   done &
@@ -257,7 +257,7 @@ done < "$WORKDIR"/text_files/"$vdsUSER"_subdomain_list;
 # -----------------------------------------------------------------------------
 echo -e "\e[33m\e[1m Copying the Main Domain data files...  \e[0m";
 
-echo; while :; do
+while :; do
   printf "."
   sleep 5
 done &

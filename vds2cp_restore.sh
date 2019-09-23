@@ -88,7 +88,7 @@ else
   echo -e "\e[33m\e[1m Extracting vds2cp_restore_$cpUSER.tar.gz now... \e[0m \e[0m \e[30;48;5;226m This can SERIOUSLY take a long time. \e[0m"
   while :; do
     printf "."
-    sleep 1
+    sleep 5
   done &
   bgid=$!
   tar -zxf /root/vds2cp_restore_"$vdsUSER".tar.gz -C /root/"$vdsUSER"_restore/
@@ -113,7 +113,7 @@ echo -e "\e[32m Creating cPanel account for domain $mainDOM as user $cpUSER \e[0
 
 while :; do
   printf "."
-  sleep 1
+  sleep 5
 done &
 bgid=$!
 
@@ -150,7 +150,7 @@ do
 
   while :; do
     printf "."
-    sleep 1
+    sleep 5
   done &
   bgid=$!
 
@@ -235,7 +235,7 @@ do
 
   while :; do
     printf "."
-    sleep 1
+    sleep 5
   done &
   bgid=$!
 
@@ -259,7 +259,7 @@ echo -e "\e[33m\e[1m Copying the Main Domain data files...  \e[0m";
 
 while :; do
   printf "."
-  sleep 1
+  sleep 5
 done &
 bgid=$!
 

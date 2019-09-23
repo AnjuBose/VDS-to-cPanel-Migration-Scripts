@@ -49,8 +49,18 @@ echo -e "\e[33m\e[1m Getting Email Account list... \e[0m"
 cat /etc/mail/virtusertable |awk '{print $1}'|grep -vE '\#|MAILER-DAEMON|postmaster|^$|root\@|ftp\@'| sed '/^@/ d' > "$WDIR"/text_files/"$VDSUSER"_mailusers;sleep 1;echo
 
 echo -e "\e[33m\e[1m Copying mailbox data... \e[0m";echo
+
+##ticking
+while :; do
+  printf "."
+  sleep 5
+done &
+bgid=$!
+##end ticking
+
 cp -a /var/spool/mail "$WDIR"/mailboxes
 
+kill "$bgid"
 # -----------------------------------------------------------------------------
 # Get the main domain
 # -----------------------------------------------------------------------------
@@ -93,6 +103,14 @@ echo
 # -----------------------------------------------------------------------------
 echo -e "\e[33m\e[1m Copying addon domain and subdomain file data now... \e[0m"
 
+##ticking
+while :; do
+  printf "."
+  sleep 5
+done &
+bgid=$!
+##end ticking
+
 while read line
 do
   d=`echo "$line" | awk '{print $1}'`
@@ -102,9 +120,19 @@ do
 done < "$WDIR"/text_files/"$VDSUSER"_addon_subdomains;
 echo
 
+kill "$bgid"
+
 # -----------------------------------------------------------------------------
 # Copying subdomains data
 # -----------------------------------------------------------------------------
+
+##ticking
+while :; do
+  printf "."
+  sleep 5
+done &
+bgid=$!
+##end ticking
 
 while read sdcopy
 do
@@ -113,6 +141,8 @@ do
   mkdir -p /root/"$TODAY"_"$VDSUSER"/domain_files/$dcop/
   cp -R "$scop"/. /root/"$TODAY"_"$VDSUSER"/domain_files/$dcop/
 done < "$WDIR"/text_files/"$VDSUSER"_subdomain_list;
+
+kill "$bgid"
 
 # -----------------------------------------------------------------------------
 # Copying the main domain data. This is messy and ugly, but there's no rsync.
@@ -125,7 +155,7 @@ ls /var/www/html/|grep -v '^fm$' |grep -v '^vdsbackup$'  |grep -vf "$WDIR"/text_
 ##ticking
 while :; do
   printf "."
-  sleep 1
+  sleep 5
 done &
 bgid=$!
 ##end ticking
@@ -147,6 +177,14 @@ echo
 # -----------------------------------------------------------------------------
 echo -e "\e[33m\e[1m Getting list of MySQL databases and dumping them... \e[0m"
 
+##ticking
+while :; do
+  printf "."
+  sleep 5
+done &
+bgid=$!
+##end ticking
+
 if [ ! -f /usr/bin/mysql ];
 then
   echo -e "\e[31m No databases to dump! \e[0m"
@@ -156,13 +194,15 @@ else
 fi
 echo
 
+kill "$bgid"
+
 # -----------------------------------------------------------------------------
 # This tars and gzips all thats been gathered (data and text files, and dumps.)
 # -----------------------------------------------------------------------------
 echo -e "\e[33m\e[1m Archiving and compressing everything thats been done...\e[0m \e[1m\e[41m BE PATIENT! \e[0m "; sleep 1
 while :; do
   printf "."
-  sleep 1
+  sleep 5
 done &
 bgid=$!
 

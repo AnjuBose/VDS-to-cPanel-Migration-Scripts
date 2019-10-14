@@ -65,7 +65,7 @@ kill "$bgid"; echo
 # Get the main domain
 # -----------------------------------------------------------------------------
 echo -e "\e[33m\e[1m Making main domain file... \e[0m"; echo
-grep -E 'ServerName|DocumentRoot' /etc/httpd/conf/httpd.conf | head -2|sed -e 's/.*Name\ //g' |sed -e 's/.*DocumentRoot\ //g'| sed '$!N;s/\n/ /'|awk ' { t = $1; $1 = $2; $2 = t; print; } ' > "$WDIR"/text_files/"$VDSUSER"_main_domain;
+grep -E 'ServerName|DocumentRoot' /etc/httpd/conf/httpd.conf | head -2|sed -e 's/.*Name\ //g' |sed -e 's/.*DocumentRoot\ //g'| xargs -n2 |awk ' { t = $1; $1 = $2; $2 = t; print; } ' > "$WDIR"/text_files/"$VDSUSER"_main_domain;
 
 
 
@@ -73,8 +73,8 @@ grep -E 'ServerName|DocumentRoot' /etc/httpd/conf/httpd.conf | head -2|sed -e 's
 # Get the addon domains, and the subdomains.
 # -----------------------------------------------------------------------------
 echo -e "\e[33m\e[1m Getting Addon and Subdomain lists... \e[0m"; echo
-grep -E 'ServerName|DocumentRoot' /etc/httpd/conf/httpd.conf | sed 1,2d |sed -e 's/.*Name\ //g' |sed -e 's/.*DocumentRoot\ //g'| sed '$!N;s/\n/ /' |awk '$1 !~ (/.*\..*\./)' > "$WDIR"/text_files/"$VDSUSER"_addonsub_list;
-grep -E 'ServerName|DocumentRoot' /etc/httpd/conf/httpd.conf | sed 1,2d |sed -e 's/.*Name\ //g' |sed -e 's/.*DocumentRoot\ //g'| sed '$!N;s/\n/ /'|awk '$1 ~ (/.*\..*\./)' > "$WDIR"/text_files/"$VDSUSER"_subdomain_list;
+grep -E 'ServerName|DocumentRoot' /etc/httpd/conf/httpd.conf | sed 1,2d |sed -e 's/.*Name\ //g' |sed -e 's/.*DocumentRoot\ //g'| xargs -n2 |awk '$1 !~ (/.*\..*\./)' > "$WDIR"/text_files/"$VDSUSER"_addonsub_list;
+grep -E 'ServerName|DocumentRoot' /etc/httpd/conf/httpd.conf | sed 1,2d |sed -e 's/.*Name\ //g' |sed -e 's/.*DocumentRoot\ //g'| xargs -n2 |awk '$1 ~ (/.*\..*\./)' > "$WDIR"/text_files/"$VDSUSER"_subdomain_list;
 
 # -----------------------------------------------------------------------------
 # List aliased/parked domains that have the web directory set to /var/www/html
@@ -147,7 +147,7 @@ kill "$bgid"; echo
 # Copying the main domain data. This is messy and ugly, but there's no rsync.
 # -----------------------------------------------------------------------------
 echo -e "\e[33m\e[1m Copying main domain... \e[0m"
-grep -E 'ServerName|DocumentRoot' /etc/httpd/conf/httpd.conf | sed 1,2d |sed -e 's/.*Name\ //g' |sed -e 's/.*DocumentRoot\ //g'| sed '$!N;s/\n/ /' |awk '{print $2}' |awk -F "/" '{print $NF}' |grep -v '^html$' > "$WDIR"/text_files/tmp_excludes
+grep -E 'ServerName|DocumentRoot' /etc/httpd/conf/httpd.conf | sed 1,2d |sed -e 's/.*Name\ //g' |sed -e 's/.*DocumentRoot\ //g'| xargs -n2 |awk '{print $2}' |awk -F "/" '{print $NF}' |grep -v '^html$' > "$WDIR"/text_files/tmp_excludes
 mkdir -p /root/"$TODAY"_"$VDSUSER"/domain_files/$MDOM
 ls /var/www/html/|grep -v '^fm$' |grep -v '^vdsbackup$'  |grep -vf "$WDIR"/text_files/tmp_excludes > "$WDIR"/text_files/mdom_exlist
 

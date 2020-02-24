@@ -91,7 +91,7 @@ else
     sleep 5
   done &
   bgid=$!
-  tar -zxf /root/vds2cp_restore_"$vdsUSER".tar -C /root/"$vdsUSER"_restore/
+  tar -xf /root/vds2cp_restore_"$vdsUSER".tar -C /root/"$vdsUSER"_restore/
   kill "$bgid"; echo
 fi
 
